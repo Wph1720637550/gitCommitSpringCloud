@@ -1,0 +1,7 @@
+C------Consistency:强一致性
+A------Availability:可用性
+P------Partition tolerance:区分容错性
+CAP理论关注的粒度是数据，而不是整体系统设计的策略
+
+AP:保证表示高可用，很友好，检测不到心跳也不会马上将服务剔除------Eureka
+CP:保证数据一致性，很残忍，检测不到心跳马上将其服务剔除   ------Zookeeper、Consul

@@ -1,0 +1,20 @@
+server:
+  port: 80
+
+
+eureka:
+  client:
+    register-with-eureka: true    #false表识不向注册中心注册自己
+    fetch-registry: true   #false表示自己就是注册中心，职责是维护服务实例，并不需要去检索服务
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka/
+
+spring:
+  application:
+    name: cloud-provider-hystrix-order
+
+#在feign中开启Hystrix
+#同样是服务降级，注意和客户端（cloud-provider-hystrix-payment8001）相区别
+feign:
+  hystrix:
+    enabled: true #如果处理自身的容错就开启。开启方式与生产端不一样。

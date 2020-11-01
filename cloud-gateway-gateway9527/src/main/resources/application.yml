@@ -1,0 +1,50 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true  #开启从注册中心动态创建路由的功能，利用微服务名进行路由     ------此动态路由类似负载均衡
+      routes:
+        - id: payment_routh #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          #uri: http://localhost:8001   #匹配后提供服务的路由地址
+          #动态路由 uri 的写法
+          uri: lb://cloud-payment-service #注册中心上的服务名称小写，而此服务名称的由来是注册在注册中心的微服务应用名称（spring.application.name的值）
+          predicates:
+            - Path=/payment/get/**   #断言,路径相匹配的进行路由
+            #表示在这个时间之后，/payment/get/** 路径的访问在会生效
+            #- After=2020-11-02T15:04:57.651+08:00[Asia/Shanghai]
+
+        - id: payment_routh2
+          #uri: http://localhost:8001   #匹配后提供服务的路由地址
+          uri: lb://cloud-payment-service
+          predicates:
+            - Path=/payment/lb/**   #断言,路径相匹配的进行路由
+            #- After=2020-11-02T15:04:57.651+08:00[Asia/Shanghai]
+
+              #必须带上这个cookie才有效
+            #- Cookie=username,zzyy  #用cmd命令行模拟带cookie的访问:curl http://localhost:9527/payment/lb --cookie "username=zzyy"
+            #curl http://localhost:9527/payment/lb -H "X-Request-Id:123 访问
+            #- Header=X-Request-Id,\d+   #\d+ 这个正则表达式代表值必须是正整数
+
+eureka:
+  instance:
+    hostname: cloud-gateway-service
+  client: #服务提供者注册进eureka注册中心去
+    service-url:
+      register-with-eureka: true
+      fetch-registry: true
+      defaultZone: http://eureka7001.com:7001/eureka
+#eureka:
+#  instance:
+#    hostname: cloud-gatewey-service
+#  client:
+#    service-url:
+#      register-with-eureka: true
+#      fetch-registry: true
+#      defaultZone: http://eureka7001.com:7001/eureka
